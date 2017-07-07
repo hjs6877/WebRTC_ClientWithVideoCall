@@ -4,6 +4,7 @@
 var call_token;         // 통화를 위한 고유 토큰
 var signaling_server;   // 시그널링 서버
 var peer_connection;    // peer connection object
+var id = undefined;
 
 function start(){
     peer_connection = new rtc_peer_connection({
@@ -16,6 +17,7 @@ function start(){
     peer_connection.onicecandidate = function(ice_event){
         if(ice_event.candidate){
             signaling_server.send(JSON.stringify({
+                id: id,
                 type: "new_ice_candidate",
                 candidate: ice_event.candidate
             }));
@@ -47,6 +49,7 @@ function start(){
          * caller가 접속에 참여했음을 시그널 서버에 알린다.
          */
         signaling_server.send(JSON.stringify({
+            id: id,
             token: call_token,
             type: "join"
         }))
@@ -64,6 +67,7 @@ function start(){
          * callee가 시그널 서버에 접속했음을 caller에게 알린다.
          */
         signaling_server.send(JSON.stringify({
+            id: id,
             token: call_token,
             type: "callee_arrived"
         }));
@@ -82,6 +86,7 @@ function new_description_created(description) {
         function () {
             signaling_server.send(
                 JSON.stringify({
+                    id: id,
                     token:call_token,
                     type:"new_description",
                     sdp:description
@@ -94,6 +99,11 @@ function new_description_created(description) {
 
 function caller_signal_handler(event) {
     var signal = JSON.parse(event.data);
+
+    if(id == undefined){
+        id = signal.id;
+    }
+
     if (signal.type === "callee_arrived") {
         peer_connection.createOffer(
             new_description_created,
@@ -120,6 +130,9 @@ function caller_signal_handler(event) {
 
 function callee_signal_handler(event) {
     var signal = JSON.parse(event.data);
+    if(id == undefined){
+        id = signal.id;
+    }
     if (signal.type === "new_ice_candidate") {
         peer_connection.addIceCandidate(
             new RTCIceCandidate(signal.candidate)
