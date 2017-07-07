@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Basic Video Call</title>
+    <script type="text/javascript" src="webrtc_pollyfill.js"></script>
+    <script type="text/javascript" src="basic_video_call.js"></script>
+    <style>
+        html, body {
+            padding: 0px;
+            margin: 0px;
+            font-family: "Arial","Helvetica",sans-serif;
+        }
+        #loading_state {
+            position: absolute;
+            top: 45%;
+            left: 0px;
+            width: 100%;
+            font-size: 20px;
+            text-align: center;
+        }
+        #open_call_state {
+            display: none;
+        }
+        #local_video {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 160px;
+            height: 120px;
+            background: #333333;
+        }
+        #remote_video {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            width: 1024px;
+            height: 768px;
+            background: #999999;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="margin:20px;">
+        <button id="btn_Connect">Connect</button>
+    </div>
+    <div id="loading_state">
+        loading...
+    </div>
+
+    <div id="open_call_state">
+        <video id="remote_video"></video>
+        <video id="local_video"></video>
+    </div>
+</body>
+</html>
